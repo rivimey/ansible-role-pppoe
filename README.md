@@ -10,6 +10,13 @@ The role depends on the systemd, pppd, and pppoe packages, but otherwise has no 
 
 Available variables are listed below:
 
+Network device created if the PPP negotiation succeeds. Leave blank to accept
+the default name. If set here and the device already exists, pppd will exit.
+
+```yaml
+pppoe_ppp_dev: ppp0
+```
+
 Ethernet device used to talk to pppoe endpoint:
 
 ```yaml
@@ -88,7 +95,7 @@ None.
 
 ## Example Playbook
 
-    - hosts: drupalvm
+    - hosts: gateway
       roles:
          - rivimey.pppoe
 
