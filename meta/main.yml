@@ -1,0 +1,21 @@
+---
+galaxy_info:
+  author: Ruth Ivimey-Cook
+  description: Configure a PPPoE service using PPPd.
+  license: MIT
+  min_ansible_version: 2.4
+
+  platforms:
+    - name: Debian
+      versions:
+        - all
+    - name: Ubuntu
+      versions:
+        - xenial
+        - bionic
+        - eoan
+
+  galaxy_tags:
+    - network
+    - pppoe
+    - pppd

@@ -1,0 +1,19 @@
+[Unit]
+BindsTo=sys-subsystem-net-devices-{{ pppoe_eth_dev }}.device
+After=sys-subsystem-net-devices-{{ pppoe_eth_dev }}.device
+
+[Service]
+# NB: dev and mtu is also defined in peers file.
+{% if pppoe_boost_mtu and pppoe_eth_mtu > 1500 %}
+ExecStartPre=/sbin/ip link set mtu {{ pppoe_eth_mtu }} dev {{ pppoe_eth_dev }}
+{% elif pppoe_eth_mtu >= 68 and pppoe_eth_mtu <= 1500 %}
+ExecStartPre=/sbin/ip link set mtu {{ pppoe_eth_mtu }} dev {{ pppoe_eth_dev }}
+{% endif %}
+ExecStartPre=/sbin/ip link set up dev {{ pppoe_eth_dev }}
+ExecStart=/usr/sbin/pppd call {{ pppoe_call_name }}
+Type=forking
+SuccessExitStatus=5
+PIDFile=/run/ppp-{{ pppoe_link_name }}.pid
+
+[Install]
+WantedBy=sys-subsystem-net-devices-{{ pppoe_eth_dev }}.device

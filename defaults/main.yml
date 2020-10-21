@@ -1,0 +1,45 @@
+---
+
+# Enable use of eth link MTUs greater than 1500.
+pppoe_boost_mtu: false
+
+# Ethernet device used to talk to pppoe endpoint. If blank, dynamically allocate.
+pppoe_ppp_dev: ppp0
+
+# Ethernet device used to talk to pppoe endpoint.
+pppoe_eth_dev: eth7
+
+# MTU condifured on the pppoe_eth_dev interface.
+pppoe_eth_mtu: 1500
+
+# MTU configured on the created pppoe link.
+pppoe_ppp_mtu: 1492
+
+# Name of the systemd service used to manage pppd.
+pppoe_service_name: pppoe
+
+# Name used for the PPPd provider config
+pppoe_call_name: provider
+
+# Basename of related PPPd control files.
+pppoe_link_name: pppoe
+
+# Tell PPPD to use remote DNS services on local system once connected.
+# Disable if you manage DNS in other ways (e.g. statically, or with your own server).
+pppoe_usepeerdns: true
+
+# Tell PPPD to enable use of IPv6 addressing on the created interface: "+ipv6"
+# NB: it won't happen unless the peer is configured to do it too.
+pppoe_enableipv6: true
+
+# Tell PPPD to set this interface as the default route once connected.
+# Disable if you need to configure the default route with more granularity.
+pppoe_setdefaultroute: true
+
+# Username and password to be set in chap-secrets. The defaults here assume
+# the actual value is set in your vault.yml file.
+# TODO: Does the chap file need server names, or IP addresses?
+# TODO: Does the chap multiple client lines?
+pppoe_client_user: "{{ __pppoe_client_user }}"
+pppoe_client_password: "{{ __pppoe_client_password }}"
+

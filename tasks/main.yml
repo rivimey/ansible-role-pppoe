@@ -1,0 +1,50 @@
+---
+# Variable setup.
+- name: Include OS-specific variables.
+  include_vars: "{{ ansible_os_family }}.yml"
+
+- name: Define pppoe_packages.
+  set_fact:
+    pppoe_packages: "{{ __pppoe_packages }}"
+  when: pppoe_packages is not defined
+
+- name: Install PPPd
+  package:
+    name: "{{ pppoe_packages }}"
+    state: present
+  register: pppoe_install
+
+- name: Ensure peers folder exists
+  file:
+    state: directory
+    path: "/etc/ppp/peers"
+
+- name: Ensure peer secrets are configured
+  template:
+    src: "etc.ppp.chap-secrets.j2"
+    dest: "/etc/ppp/chap-secrets"
+    mode: 0600
+    owner: root
+    group: root
+
+- name: Ensure peers provider is configured
+  template:
+    src: "etc.ppp.peers.provider.j2"
+    dest: "/etc/ppp/peers/{{ pppoe_call_name }}"
+    mode: 0644
+    owner: root
+    group: root
+
+- name: Ensure pppoe service is configured
+  template:
+    src: "etc.system.systemd.pppoe.service.j2"
+    dest: "/etc/systemd/system/{{ pppoe_service_name }}.service"
+    mode: 0644
+    owner: root
+    group: root
+
+- name: Ensure PPPoE Service is enabled and running
+  service:
+    name: "{{ pppoe_service_name }}.service"
+    enabled: yes
+    state: started

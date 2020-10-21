@@ -1,0 +1,81 @@
+
+# Configuration file for PPP, using PPP over Ethernet
+# to connect to a DSL provider.
+#
+# See the manual page pppd(8) for information on all the options.
+
+##
+# Section 1
+#
+# The DSL user name given to your by your DSL provider.
+user {{ pppoe_client_user }}
+
+# Use the pppoe program to send the ppp packets over the Ethernet link
+# This line should work fine if this computer is the only one accessing
+# the Internet through this DSL connection. This is the right line to use
+# for most people.
+pty "/usr/sbin/pppoe -I {{ pppoe_eth_dev }} -T90 -m {{ pppoe_ppp_mtu }}"
+
+# Log the contents of all control packets sent or received.
+# debug
+
+# If the link dies, wait 2 secs before trying to restart. Avoids busy-wait.
+holdoff 2
+
+# Don't terminate - keep trying to reconnect
+maxfail 0
+
+{% if pppoe_ppp_dev %}
+# The interface name to create for this connection, eg ppp0.
+# If this already exists, pppd will quit.
+ifname {{ pppoe_ppp_dev }}
+{% endif %}
+
+{% if pppoe_setdefaultroute %}
+# Use this connection as the default route.
+defaultroute
+replacedefaultroute
+{% endif %}
+
+{% if pppoe_usepeerdns %}
+# Use remote peer's DNS servers.
+usepeerdns
+{% endif %}
+
+{% if pppoe_enableipv6 %}
+# Enable IPv6 on this interface, accepting the remote address.
++ipv6 ipv6cp-use-persistent
+ipv6cp-accept-remote
+{% endif %}
+
+linkname {{ pppoe_link_name }}
+
+##
+# Section 3
+#
+# You shouldn't need to change these options...
+
+# Hide PW when logging.
+hide-password
+
+# echo-interval is related to the -T (timeout) of pppoe.
+lcp-echo-interval 30
+lcp-echo-failure 4
+
+# Override any connect script that may have been set in /etc/ppp/options.
+connect /bin/true
+noauth
+persist
+mtu {{ pppoe_ppp_mtu }}
+mru {{ pppoe_ppp_mtu }}
+
+# RFC 2516, paragraph 7 mandates that the following options MUST NOT be
+# requested and MUST be rejected if requested by the peer:
+# Address-and-Control-Field-Compression (ACFC)
+noaccomp
+
+# Asynchronous-Control-Character-Map (ACCM)
+default-asyncmap
+
+plugin rp-pppoe.so {{ pppoe_eth_dev }}
+

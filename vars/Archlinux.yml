@@ -1,0 +1,5 @@
+---
+__pppoe_packages:
+  - ppp
+  - pppoe
+  - pppoeconf

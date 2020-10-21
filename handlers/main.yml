@@ -1,0 +1,7 @@
+---
+
+- name: Restart pppoe service
+  service:
+    name: "{{ pppoe_service_name }}"
+    state: restarted
+  when: not pppoe_install.changed
